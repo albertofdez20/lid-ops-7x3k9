@@ -63,6 +63,22 @@ td{border-bottom:1px solid var(--line);padding:6px 8px;vertical-align:top}
 #tpbar button{background:#2e2650;color:#fff;border:none;border-radius:8px;padding:8px 14px;font-size:14px;cursor:pointer}
 #tptext{flex:1;overflow-y:auto;padding:28vh 8% 60vh;font-size:32px;line-height:1.65;font-weight:600;white-space:pre-wrap}
 @media(max-width:760px){#tptext{font-size:24px;padding:24vh 6% 60vh}}
+.trend .why{font-size:12px;color:var(--sub);margin:4px 0 8px}
+.stale{background:#fff3e6;color:#b25e00}
+details.card summary{font-family:'Space Grotesk',sans-serif;font-size:15px;color:var(--navy);font-weight:700;cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center}
+details.card summary::after{content:"+";color:var(--purple);font-size:18px}
+details[open].card summary::after{content:"–"}
+details.card>div{margin-top:12px}
+.bankrow{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;border-bottom:1px dashed var(--line);padding:8px 0}
+.bankrow:last-child{border-bottom:none}
+.bankrow .bk{font-size:11px;font-weight:700;color:var(--purple);display:block}
+.bankrow .bv{font-size:12.5px;white-space:pre-wrap}
+.qrow{display:flex;align-items:center;gap:8px;border-bottom:1px dashed var(--line);padding:7px 0;font-size:12.5px;flex-wrap:wrap}
+.qrow b{color:var(--navy)}
+.qrow .qn{flex:1;min-width:180px}
+.qrow select{border:1px solid var(--line);border-radius:6px;padding:3px 6px;font-size:12px;color:var(--ink);background:#fff}
+.qrow select.s-engaging{border-color:#d9a400}.qrow select.s-dmd{border-color:#7c5cff}.qrow select.s-call{border-color:#1a9e6e}.qrow select.s-activated{background:#e7f7f0;border-color:#1a9e6e;font-weight:700}
+code.q{display:block;background:var(--pale);border-radius:6px;padding:6px 8px;font-size:11.5px;margin:4px 0;overflow-x:auto;white-space:nowrap}
 </style>
 </head>
 <body>
@@ -83,6 +99,12 @@ td{border-bottom:1px solid var(--line);padding:6px 8px;vertical-align:top}
   <div class="card">
     <h2>Today's video <span class="tag" id="vid-tag"></span></h2>
     <div id="vid-panel"></div>
+  </div>
+
+  <div class="card">
+    <h2>Trending now <span class="tag" id="trend-tag"></span></h2>
+    <div id="trends"></div>
+    <div class="note">Refreshed by the 8am brief. Post drafts are ready to paste; verify the source link before posting.</div>
   </div>
 
   <div class="card">
@@ -149,6 +171,24 @@ td{border-bottom:1px solid var(--line);padding:6px 8px;vertical-align:top}
   </div>
 </div>
 </div>
+</div>
+
+<details class="card">
+  <summary>Copy bank · blurbs, frames, stats, CTAs</summary>
+  <div id="bank"></div>
+</details>
+
+<details class="card">
+  <summary>Prospect queue · community fishing</summary>
+  <div id="queue"></div>
+  <div class="note">Status saves on this device. Tell Claude new names in chat and they appear here on the next push.</div>
+</details>
+
+<details class="card">
+  <summary>X search buckets · daily fishing queries</summary>
+  <div id="buckets"></div>
+  <div class="note">Paste into X search, filter Latest. Engage publicly 3-7 days before any DM. No cold link drops.</div>
+</details>
 </div>
 
 <div id="tp">
@@ -253,6 +293,63 @@ const VIDEOS = {
  c:"Your content brings the people. Your link closes the sale. Your channel stays yours. lid.pro"}}
 };
 // ---- END BATCH DATA ----
+
+// ---- DAILY DATA (TRENDS replaced each morning by the daily brief task) ----
+const TRENDS = {date:"2026-06-10", items:[
+{t:"Fable 5: free window on paid plans until June 22",
+ why:"The build-anything narrative is peaking. Lid's angle: building is free now, distribution and ownership are the game.",
+ post:"Anthropic's most capable model is included on paid plans through June 22.\n\nTwelve days where the distance between your idea and a working product is one clear instruction.\n\nThe creators who ship something they own this month start the next decade early.",
+ src:"https://www.anthropic.com/news/claude-fable-5-mythos-5"},
+{t:"Meta pays creators in USDC on Solana (Stripe + Circle)",
+ why:"Mainstream platforms normalizing digital-dollar payouts validates Lid's rail. Expansion toward 160+ markets by end of 2026.",
+ post:"Meta now pays creators in digital dollars on Solana, through Stripe and Circle. Piloting in Colombia and the Philippines, expanding toward 160+ markets.\n\nThe payout rail stopped being the experiment. It's the default being rolled out.\n\nThe question left: who owns the sale.",
+ src:""}
+]};
+// ---- END DAILY DATA ----
+
+const BANK = [
+{k:"Blurb · ultra-short (general)",v:"Lid lets creators sell digital products with affiliates and instant payments. Flat 3% fee. No middlemen. One link: create, share, sell, get paid."},
+{k:"Blurb · ultra-short (crypto)",v:"Lid is a programmable commerce routing layer on Solana. Permissionless affiliate distribution, on-chain attribution, instant USDC settlement. Flat 3% infrastructure fee."},
+{k:"Blurb · short paragraph (general)",v:"Lid is infrastructure for selling digital products together. Creators list a product, affiliates share it with a tracked link, and every sale splits and settles instantly. No contracts, no 30-day payout windows, no 10%+ platform fees. A flat 3% fee that stays aligned as you scale. Live in production at app.lid.pro."},
+{k:"Blurb · investor ultra-short (LinkedIn/email only)",v:"Lid is a programmable commerce routing layer: permissionless affiliate distribution, instant payouts, flat 3% fee. Live in production. Raising $500K pre-seed to prove liquidity and expand into agentic commerce infrastructure."},
+{k:"Blurb · forwardable intro",v:"Alberto is building Lid: infrastructure for selling digital products with instant payments and permissionless affiliates. Flat 3% fee, live in production. Worth a look: app.lid.pro"},
+{k:"Bio · X/Telegram",v:"Building Lid. Sell digital products with affiliates and instant payments. Flat 3%. app.lid.pro"},
+{k:"Frame · four steps (cold audiences)",v:"Create a product. Share a link. Get paid instantly."},
+{k:"Frame · non-tech creators",v:"Your CTA, not your distribution channel."},
+{k:"Frame · ES creators",v:"Ejército de promotores."},
+{k:"Frame · crypto KOLs",v:"Tu propio Binance afiliado, al revés."},
+{k:"Frame · investors",v:"Your audience is your sales team."},
+{k:"Stat · creator income",v:"Around half of creators (48.7%) earn under $10K a year. Product sales and affiliate income are now 21.2% of creator income."},
+{k:"Stat · creator economy",v:"165 million new creators joined major platforms between 2020 and 2025. The creator economy passed $250B in 2025."},
+{k:"Stat · AI content",v:"An MIT and Oxford estimate puts AI-generated material at 64% of newly published internet content."},
+{k:"Stat · LATAM remittances",v:"Remittances to Latin America hit $174B in 2025. Stablecoins cut the cost of sending money home under 1%."},
+{k:"Stat · Lid proof (honest numbers)",v:"Live in production on Solana mainnet since May 8, 2026. 3 clean payout cycles, 100% payout accuracy, payouts under 1 second. 5+ creator-owned products."},
+{k:"CTA · no pressure",v:"This is the link if you want to check it out. lid.pro"},
+{k:"CTA · ES",v:"El link está en mi bio si lo quieres probar. lid.pro"},
+{k:"Links",v:"Public: lid.pro · App: app.lid.pro · Article: AI Is the Horse. Distribution Is the Race."}
+];
+
+const QUEUE = [
+{n:"Roberto Sanz · @CriptoRoberto",ch:"X / WhatsApp",note:"KOL tier. Product live. Activate his affiliates: first attributed cycle candidate."},
+{n:"Derlys · @nomadaxtwo",ch:"X / PanaSol",note:"Community lead. First organic cycle. Get PanaSol members sharing her products."},
+{n:"Luis · La caja Ambar",ch:"IG",note:"Non-tech creator. Needs first sale. Concierge follow-up."},
+{n:"Dan · La Familia",ch:"Telegram",note:"Advisor. Campaign funder when confirmed. Keep warm, no campaign talk public."},
+{n:"PanaSol community",ch:"Telegram/X",note:"Solana Colombia. Fishing ground for affiliates for Derlys's products."},
+{n:"Superteam Spain",ch:"X/Telegram",note:"3rd place track. Builders who sell courses/templates."},
+{n:"La Familia members",ch:"Telegram",note:"Spanish-speaking Solana community. Source next 5 creators here."}
+];
+const QSTATUS = ["target","engaging","dmd","call","activated"];
+const QLABEL = {target:"Target",engaging:"Engaging",dmd:"DM'd",call:"Call booked",activated:"Activated"};
+
+const BUCKETS = [
+{n:"1 · Pain queries (warmest)",q:['"gumroad fees" min_faves:5 -filter:replies','"gumroad takes" OR "gumroad takes 13" min_faves:3','"stripe holding" OR "stripe froze" min_faves:5 -filter:replies']},
+{n:"2 · Competitor flips",q:['gumroad.com lang:en min_faves:5 -filter:replies','whop.com lang:en min_faves:3 -filter:replies','stan.store min_faves:3 -filter:replies']},
+{n:"3 · Affiliate operators",q:['"my affiliate program" min_faves:3','"affiliate link below" OR "ref link below" min_faves:3','"30% commission" OR "40% commission" OR "50% commission" creator']},
+{n:"4 · Crypto-native sellers",q:['"selling" course solana OR USDC OR stablecoin','"alpha group" pay OR subscription min_faves:5','"premium content" wallet OR USDC min_faves:3']},
+{n:"5 · Course launchers",q:['"just launched my course" min_faves:10 -filter:replies','"cohort course" launching min_faves:5','"new course live" min_faves:10']},
+{n:"6 · LATAM (home turf)",q:['"vender curso" afiliados lang:es min_faves:3','"programa de afiliados" creador lang:es','"comisiones" creador OR curso lang:es']},
+{n:"7 · Lurker conversion",q:['to:levelsio min_faves:2','to:balajis min_faves:5','to:rasmic min_faves:2']}
+];
 
 const fmt = d => d.toISOString().slice(0,10);
 const now = new Date();
@@ -370,6 +467,51 @@ window.tpClose = ()=>{
   document.getElementById('tp').classList.remove('open');
   tpRun=false; if(tpRAF){cancelAnimationFrame(tpRAF); tpRAF=null;}
 };
+
+// ---- Trending now ----
+(function(){
+  const tag = document.getElementById('trend-tag');
+  const el = document.getElementById('trends');
+  const fresh = TRENDS.date === tKey;
+  tag.textContent = fresh ? 'today' : 'from '+TRENDS.date+' · refresh pending';
+  if(!fresh) tag.classList.add('stale');
+  el.innerHTML = TRENDS.items.map((tr,i)=>{
+    const id='tr'+i;
+    return `<div class="post trend"><div class="meta"><span class="ch">${tr.t}</span>
+      <button class="copy" onclick="copyTxt(this,'${id}')">Copy post</button></div>
+      <div class="why">${tr.why}${tr.src?` · <a href="${tr.src}" target="_blank">source</a>`:''}</div>
+      <pre id="${id}">${tr.post.replace(/</g,'&lt;')}</pre></div>`;
+  }).join('') || '<div class="empty">No trends loaded yet today.</div>';
+})();
+
+// ---- Copy bank ----
+document.getElementById('bank').innerHTML = BANK.map((b,i)=>
+  `<div class="bankrow"><div style="flex:1"><span class="bk">${b.k}</span><span class="bv" id="bk${i}">${b.v.replace(/</g,'&lt;')}</span></div>
+   <button class="copy" onclick="copyTxt(this,'bk${i}')">Copy</button></div>`).join('');
+
+// ---- Prospect queue ----
+(function(){
+  const saved = JSON.parse(localStorage.getItem('lidqueue')||'{}');
+  document.getElementById('queue').innerHTML = QUEUE.map((p,i)=>{
+    const st = saved[p.n] || 'target';
+    return `<div class="qrow"><div class="qn"><b>${p.n}</b> · ${p.ch}<br><span style="color:var(--sub)">${p.note}</span></div>
+      <select class="s-${st}" onchange="qSet('${p.n.replace(/'/g,"\\'")}',this)">`+
+      QSTATUS.map(s=>`<option value="${s}" ${s===st?'selected':''}>${QLABEL[s]}</option>`).join('')+
+      `</select></div>`;
+  }).join('');
+})();
+window.qSet = (name,sel)=>{
+  const saved = JSON.parse(localStorage.getItem('lidqueue')||'{}');
+  saved[name]=sel.value; localStorage.setItem('lidqueue',JSON.stringify(saved));
+  sel.className = 's-'+sel.value;
+};
+
+// ---- Search buckets ----
+document.getElementById('buckets').innerHTML = BUCKETS.map((b,bi)=>
+  `<div style="margin-bottom:10px"><b style="color:var(--navy);font-size:12.5px">${b.n}</b>`+
+  b.q.map((q,qi)=>`<div style="display:flex;gap:6px;align-items:center"><code class="q" id="bq${bi}_${qi}" style="flex:1">${q.replace(/</g,'&lt;')}</code>
+    <button class="copy" onclick="copyTxt(this,'bq${bi}_${qi}')">Copy</button></div>`).join('')+
+  `</div>`).join('');
 </script>
 </body>
 </html>
