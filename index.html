@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LID Marketing OS</title>
+<style>
+:root { color-scheme: light;
+  --navy:#1d1733; --purple:#7c5cff; --pale:#f3f0fb; --line:#d9d4ea; --ink:#2a2438; --sub:#6b6483; --ok:#1a9e6e;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter','Helvetica Neue',Arial,sans-serif;background:#faf9fd;color:var(--ink);font-size:14px;line-height:1.5;padding:20px}
+h1,h2,h3{font-family:'Space Grotesk','Inter',sans-serif}
+.wrap{max-width:980px;margin:0 auto}
+header{display:flex;justify-content:space-between;align-items:baseline;border-bottom:3px solid var(--purple);padding-bottom:10px;margin-bottom:18px}
+header h1{font-size:22px;color:var(--navy)}
+header .date{color:var(--sub);font-size:13px}
+.grid{display:grid;grid-template-columns:1.4fr 1fr;gap:16px}
+@media(max-width:760px){.grid{grid-template-columns:1fr}}
+.card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:16px}
+.card h2{font-size:15px;color:var(--navy);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.tag{display:inline-block;background:var(--pale);color:var(--purple);font-size:11px;font-weight:600;border-radius:20px;padding:2px 10px}
+.post{border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin-bottom:10px;background:#fdfcff}
+.post .meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.post .ch{font-weight:700;font-size:12px;color:var(--navy)}
+.post pre{white-space:pre-wrap;font-family:inherit;font-size:13px;color:var(--ink);background:none}
+.copy{border:1px solid var(--purple);color:var(--purple);background:#fff;border-radius:6px;font-size:11px;padding:3px 10px;cursor:pointer;font-weight:600}
+.copy:hover{background:var(--purple);color:#fff}
+.copy.done{background:var(--ok);border-color:var(--ok);color:#fff}
+.check{display:flex;align-items:center;gap:10px;padding:7px 4px;border-bottom:1px dashed var(--line);cursor:pointer;user-select:none}
+.check:last-child{border-bottom:none}
+.check input{width:16px;height:16px;accent-color:var(--purple)}
+.check.on span{text-decoration:line-through;color:var(--sub)}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th{background:var(--navy);color:#fff;text-align:left;padding:6px 8px;font-weight:600}
+td{border-bottom:1px solid var(--line);padding:6px 8px;vertical-align:top}
+.rhythm{display:flex;gap:10px;flex-wrap:wrap}
+.rcell{flex:1;min-width:130px;background:var(--pale);border-radius:10px;padding:10px}
+.rcell b{display:block;color:var(--navy);font-size:12.5px}
+.rcell span{font-size:12px;color:var(--sub)}
+.quiet li,.guard li{margin-left:18px;margin-bottom:4px;font-size:13px}
+.daytabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.daytab{border:1px solid var(--line);background:#fff;border-radius:8px;padding:5px 12px;cursor:pointer;font-size:12.5px;font-weight:600;color:var(--sub)}
+.daytab.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.kpi{background:var(--pale);border-radius:10px;padding:10px}
+.kpi b{display:block;font-size:12px;color:var(--navy)}
+.kpi span{font-size:11.5px;color:var(--sub)}
+.note{font-size:12px;color:var(--sub);margin-top:8px}
+.empty{color:var(--sub);font-size:13px;padding:8px 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>LID Marketing OS</h1>
+  <div class="date" id="today-date"></div>
+</header>
+
+<div class="grid">
+<div>
+  <div class="card">
+    <h2>Today <span class="tag" id="today-tag"></span></h2>
+    <div id="today-posts"></div>
+    <div class="note" id="today-note"></div>
+  </div>
+
+  <div class="card">
+    <h2>Content library · this batch</h2>
+    <div class="daytabs" id="daytabs"></div>
+    <div id="lib"></div>
+    <div class="note">New batch lands every Sunday 5pm. This page refreshes with it.</div>
+  </div>
+</div>
+
+<div>
+  <div class="card">
+    <h2>Daily core block · 30 min</h2>
+    <div id="checks"></div>
+    <div class="note">Resets each day. Checks save on this device.</div>
+  </div>
+
+  <div class="card">
+    <h2>Weekly rhythm</h2>
+    <div class="rhythm">
+      <div class="rcell"><b>Daily 8:00</b><span>Brief: trends + replies</span></div>
+      <div class="rcell"><b>Sunday 17:00</b><span>Next week's batch</span></div>
+      <div class="rcell"><b>Monday 8:30</b><span>Weekly review</span></div>
+      <div class="rcell"><b>1x weekly</b><span>Video recording session</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Channels</h2>
+    <table>
+      <tr><th>Channel</th><th>Lang</th><th>Cadence</th></tr>
+      <tr><td><b>X</b> · sharpest voice, no raise talk</td><td>EN</td><td>1/day</td></tr>
+      <tr><td><b>LinkedIn</b> · investor signal</td><td>EN</td><td>5x wk</td></tr>
+      <tr><td><b>Threads</b> · zero jargon</td><td>EN</td><td>3x wk</td></tr>
+      <tr><td><b>IG/TikTok</b> · reels, ELI5</td><td>ES</td><td>3x wk</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2>Mission · by Jul 31</h2>
+    <div class="kpis">
+      <div class="kpi"><b>Creators activated</b><span>create + share + affiliate seeded</span></div>
+      <div class="kpi"><b>Affiliate cycles</b><span>first attributed payout cycles</span></div>
+      <div class="kpi"><b>Investor inbound</b><span>LinkedIn signal, DMs</span></div>
+      <div class="kpi"><b>Calls booked</b><span>content → concierge call</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Guardrails</h2>
+    <ul class="guard">
+      <li>Stats trace to Vision v13 only</li>
+      <li>No fundraising talk on X</li>
+      <li>No emojis, hashtags, em dashes, "but"</li>
+      <li>ES = neutral LATAM, never Castilian</li>
+      <li>No fiat promises until Bridge ships</li>
+    </ul>
+    <h2 style="margin-top:12px">Quiet list</h2>
+    <ul class="quiet">
+      <li>Voight (until agent-sourced cycle)</li>
+      <li>La Familia campaign (until Dan confirms)</li>
+      <li>Entity/legal · Pro pricing</li>
+    </ul>
+  </div>
+</div>
+</div>
+</div>
+
+<script>
+// ---- BATCH DATA (replaced every Sunday by the weekly batch task) ----
+const POSTS = {
+"2026-06-10":[
+ {ch:"IG/TikTok · ES",label:"Fable 5 video (record + post today)",text:"Caption IG: La distancia entre tu idea y tu producto acaba de desaparecer.\n\nEsta semana escoge una idea y pídele a la IA la versión uno. Que salga fea no importa. Que salga, sí importa.\n\nCaption TikTok: Apps que necesitaban cien prompts hoy salen con uno. Tu idea ya no tiene pretexto. Constrúyela esta semana."},
+ {ch:"X · EN",label:"Article critical hour",text:"Reply to every comment on the article within 5 minutes. Author-reply-to-reply is the boost."}],
+"2026-06-11":[
+ {ch:"X · EN",label:"Fable 5 video + article re-surface",text:"Yesterday I wrote that AI made building free and distribution is the race.\n\n60 seconds on what that means for you and the idea sitting in your notes.\n\n(First reply: The full argument is here if you want it: [X Article link])"}],
+"2026-06-15":[
+ {ch:"X · EN",label:"Product proof",text:"First organic sale on Lid: a €5 ebook.\n\nThe creator got €4.85 the same second the buyer paid.\n\n3% flat. No holds. No 30-day payout window.\n\nSmall number, real proof. The rail works."},
+ {ch:"LinkedIn · EN",label:"Build in public",text:"Lid went live on May 8. Five weeks in production.\n\nWhat's true today: 3 clean payout cycles. 100% payout accuracy. 5+ creator-owned products. Creators validated in 2 languages.\n\nWhat's next: the first affiliate-attributed sale. That's the proof the whole thesis stands on, and we're building straight at it.\n\nBuilding infrastructure means the boring numbers matter most. Accuracy before volume. Trust before scale."},
+ {ch:"IG · ES",label:"Reel 1: Cobra al instante",text:"Vende tu producto digital y cobra en el mismo segundo. Así de simple. El link está en la bio. lid.pro"}],
+"2026-06-16":[
+ {ch:"X · EN",label:"Market vision",text:"An MIT and Oxford estimate puts AI-generated material at 64% of new internet content.\n\nMaking content stopped being the hard part. Getting it trusted and distributed is.\n\nDistribution is the moat. The people who own it win the next decade of commerce."},
+ {ch:"LinkedIn · EN",label:"Expertise",text:"I onboarded three creators in three weeks. Each one needed a different sentence.\n\nThe non-tech creator: \"Your CTA, not your distribution channel.\"\nThe community lead: \"An army of promoters.\"\nThe crypto veteran: \"Your own affiliate program, reversed.\"\n\nSame product. Three mental models.\n\nThe lesson for any founder: the product translates. The pitch doesn't. Find the sentence each customer already thinks in."},
+ {ch:"Threads · EN",label:"Creator income",text:"Around half of all creators earn less than $10K a year.\n\nThe problem was never talent. Platforms pay for attention, and attention is rented.\n\nSelling something you own changes the math."}],
+"2026-06-17":[
+ {ch:"X · EN",label:"Affiliate recruiting",text:"You don't need your own product to earn online.\n\nCreators on Lid set a commission on every product they sell. You share the link. A sale happens. Your cut lands the same second.\n\nNo application. No approval. No waiting for a monthly payout.\n\nThis is the link if you want to check it out. lid.pro"},
+ {ch:"LinkedIn · EN",label:"Market stat",text:"21.2% of creator income now comes from product sales and affiliate commissions.\n\nThat's a deliberate move away from ad revenue and algorithm dependence. Creators are choosing income they own.\n\n165 million new creators joined major platforms between 2020 and 2025. Around half still earn under $10K a year.\n\nThe gap is distribution, not talent. Whoever closes that gap owns the next layer of commerce."},
+ {ch:"IG · ES",label:"Reel 2: Ejército de promotores",text:"Tu audiencia es tu equipo de ventas. Tú pones la comisión, ellos comparten, todos cobran al instante. lid.pro"}],
+"2026-06-18":[
+ {ch:"X · EN",label:"Building in public",text:"In the trenches this week:\n\nSpanish version live. Analytics live for creators and affiliates. Trust fixes shipping.\n\n3 clean payout cycles. 100% payout accuracy.\n\nNext proof: the first affiliate-attributed sale. Day by day."},
+ {ch:"LinkedIn · EN",label:"Story",text:"I'm a 2x founder from Mexico. No Stanford network. No warm intro on Sand Hill Road.\n\nEvery meeting I've ever had, I earned through work. Every user on Lid, I onboarded on a call, one by one.\n\nSome founders raise on momentum. The rest of us build proof first.\n\nI've stopped seeing that as a disadvantage. Proof compounds. Momentum fades."},
+ {ch:"Threads · EN",label:"Sales team",text:"Your audience is your sales team.\n\nAnyone who loves what you make can share it and earn a cut, paid the moment a sale happens.\n\nThat's the whole idea. Simple ideas scale."}],
+"2026-06-19":[
+ {ch:"X · EN",label:"Market vision",text:"Remittances to Latin America hit $174B in 2025. Stablecoins drove the growth and cut the cost of sending money home under 1%.\n\nThe same rails that move remittances can move commerce. Digital products, instant splits, dollars that arrive in seconds.\n\nThat corridor is where the next wave of creators gets paid."},
+ {ch:"LinkedIn · EN",label:"Weekly shiplog (fill brackets first)",text:"Week in the trenches at Lid:\n\nShipped: [real items from this week]\nLearned: [one honest lesson]\nNext: [top priority for next week]\n\n3% flat. Instant payouts. One step at a time."},
+ {ch:"IG · ES",label:"Reel 3: La mitad de los creadores",text:"Casi la mitad de los creadores ganan menos de $10K al año. El problema es la distribución, no el talento. Crea algo tuyo. lid.pro"}],
+"2026-06-20":[
+ {ch:"X · EN",label:"Experience",text:"College football taught me more about building a startup than my MBA did.\n\nYou show up after you lose. You run the play again. You trust the reps.\n\nDiscipline wins the race."},
+ {ch:"Threads · EN",label:"Own the sale",text:"You spent years building your audience.\n\nThe platform gets paid every day. You get paid when the algorithm feels like it.\n\nOwn the sale. That's the shift."}],
+"2026-06-21":[
+ {ch:"X · EN",label:"Product demo (attach 40s screen rec)",text:"Create a product. Share a link. Get paid instantly.\n\n40 seconds. Real product, real payout.\n\nThis is Lid."},
+ {ch:"System",label:"Sunday: review next week's batch",text:"The Week 2 batch lands at 17:00. One review session, then the week is loaded."}]
+};
+const CHECKS = ["Read the 8am brief","Post today's content (all channels due)","Run the reply list (5-10 replies)","15 min community engagement (ES + EN)"];
+// ---- END BATCH DATA ----
+
+const fmt = d => d.toISOString().slice(0,10);
+const now = new Date();
+document.getElementById('today-date').textContent = now.toLocaleDateString('en-US',{weekday:'long', month:'long', day:'numeric', year:'numeric'});
+
+function postHTML(p, idx){
+  const id = 'cp'+idx+Math.random().toString(36).slice(2,6);
+  return `<div class="post"><div class="meta"><span class="ch">${p.ch} · ${p.label}</span>
+  <button class="copy" onclick="copyTxt(this,'${id}')">Copy</button></div>
+  <pre id="${id}">${p.text.replace(/</g,'&lt;')}</pre></div>`;
+}
+window.copyTxt = (btn,id)=>{
+  navigator.clipboard.writeText(document.getElementById(id).textContent).then(()=>{
+    btn.textContent='Copied'; btn.classList.add('done');
+    setTimeout(()=>{btn.textContent='Copy';btn.classList.remove('done')},1500);
+  });
+};
+
+// Today panel
+const tKey = fmt(now);
+const tPosts = POSTS[tKey];
+const tEl = document.getElementById('today-posts');
+const dates = Object.keys(POSTS).sort();
+if (tPosts){
+  document.getElementById('today-tag').textContent = tPosts.length + ' item' + (tPosts.length>1?'s':'');
+  tEl.innerHTML = tPosts.map(postHTML).join('');
+  document.getElementById('today-note').textContent = '';
+} else {
+  const next = dates.find(d=>d>tKey);
+  document.getElementById('today-tag').textContent = 'no batch items';
+  tEl.innerHTML = '<div class="empty">No batch content scheduled today. Daily brief still runs at 8am.</div>';
+  document.getElementById('today-note').textContent = next ? 'Next scheduled content: '+next : 'Next batch lands Sunday 17:00.';
+}
+
+// Daily checklist with localStorage, keyed by date
+const ckEl = document.getElementById('checks');
+const ckKey = 'lidchk-'+tKey;
+let state = JSON.parse(localStorage.getItem(ckKey)||'[]');
+function renderChecks(){
+  ckEl.innerHTML = CHECKS.map((c,i)=>`<label class="check ${state[i]?'on':''}"><input type="checkbox" ${state[i]?'checked':''} onchange="tick(${i})"><span>${c}</span></label>`).join('');
+}
+window.tick = i => { state[i]=!state[i]; localStorage.setItem(ckKey,JSON.stringify(state)); renderChecks(); };
+renderChecks();
+
+// Content library tabs
+const tabsEl = document.getElementById('daytabs');
+const libEl = document.getElementById('lib');
+const names = {0:'Sun',1:'Mon',2:'Tue',3:'Wed',4:'Thu',5:'Fri',6:'Sat'};
+function showDay(d){
+  document.querySelectorAll('.daytab').forEach(b=>b.classList.toggle('active', b.dataset.d===d));
+  libEl.innerHTML = POSTS[d].map(postHTML).join('');
+}
+window.showDay = showDay;
+tabsEl.innerHTML = dates.map(d=>{
+  const day = names[new Date(d+'T12:00:00').getDay()];
+  return `<button class="daytab" data-d="${d}" onclick="showDay('${d}')">${day} ${d.slice(8)}</button>`;
+}).join('');
+showDay(POSTS[tKey] ? tKey : dates.find(d=>d>=tKey) || dates[dates.length-1]);
+</script>
+</body>
+</html>
