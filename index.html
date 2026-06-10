@@ -49,6 +49,20 @@ td{border-bottom:1px solid var(--line);padding:6px 8px;vertical-align:top}
 .kpi span{font-size:11.5px;color:var(--sub)}
 .note{font-size:12px;color:var(--sub);margin-top:8px}
 .empty{color:var(--sub);font-size:13px;padding:8px 0}
+.vtabs{display:flex;gap:6px;margin-bottom:8px}
+.vtab{border:1px solid var(--line);background:#fff;border-radius:8px;padding:4px 14px;cursor:pointer;font-size:12.5px;font-weight:700;color:var(--sub)}
+.vtab.active{background:var(--purple);color:#fff;border-color:var(--purple)}
+.vstat{display:flex;gap:12px;flex-wrap:wrap;margin-top:10px}
+.vstat label{display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer}
+.vstat input{accent-color:var(--purple)}
+.tpbtn{width:100%;margin-top:10px;background:var(--navy);color:#fff;border:none;border-radius:8px;padding:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Space Grotesk',sans-serif}
+.tpbtn:hover{background:var(--purple)}
+#tp{position:fixed;inset:0;background:#0e0a1d;color:#f3f0fb;z-index:99;display:none;flex-direction:column}
+#tp.open{display:flex}
+#tpbar{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:#1d1733}
+#tpbar button{background:#2e2650;color:#fff;border:none;border-radius:8px;padding:8px 14px;font-size:14px;cursor:pointer}
+#tptext{flex:1;overflow-y:auto;padding:28vh 8% 60vh;font-size:32px;line-height:1.65;font-weight:600;white-space:pre-wrap}
+@media(max-width:760px){#tptext{font-size:24px;padding:24vh 6% 60vh}}
 </style>
 </head>
 <body>
@@ -64,6 +78,11 @@ td{border-bottom:1px solid var(--line);padding:6px 8px;vertical-align:top}
     <h2>Today <span class="tag" id="today-tag"></span></h2>
     <div id="today-posts"></div>
     <div class="note" id="today-note"></div>
+  </div>
+
+  <div class="card">
+    <h2>Today's video <span class="tag" id="vid-tag"></span></h2>
+    <div id="vid-panel"></div>
   </div>
 
   <div class="card">
@@ -132,8 +151,17 @@ td{border-bottom:1px solid var(--line);padding:6px 8px;vertical-align:top}
 </div>
 </div>
 
+<div id="tp">
+  <div id="tpbar">
+    <button onclick="tpSpeed(-0.2)">Slower</button>
+    <button id="tpplay" onclick="tpToggle()">Start</button>
+    <button onclick="tpSpeed(0.2)">Faster</button>
+    <button onclick="tpClose()">Close</button>
+  </div>
+  <div id="tptext" onclick="tpToggle()"></div>
+</div>
 <script>
-// ---- BATCH DATA (replaced every Sunday by the weekly batch task) ----
+// ---- BATCH DATA (POSTS and VIDEOS replaced every Sunday by the weekly batch task) ----
 const POSTS = {
 "2026-06-10":[
  {ch:"IG/TikTok · ES",label:"Fable 5 video (record + post today)",text:"Caption IG: La distancia entre tu idea y tu producto acaba de desaparecer.\n\nEsta semana escoge una idea y pídele a la IA la versión uno. Que salga fea no importa. Que salga, sí importa.\n\nCaption TikTok: Apps que necesitaban cien prompts hoy salen con uno. Tu idea ya no tiene pretexto. Constrúyela esta semana."},
@@ -167,7 +195,63 @@ const POSTS = {
  {ch:"X · EN",label:"Product demo (attach 40s screen rec)",text:"Create a product. Share a link. Get paid instantly.\n\n40 seconds. Real product, real payout.\n\nThis is Lid."},
  {ch:"System",label:"Sunday: review next week's batch",text:"The Week 2 batch lands at 17:00. One review session, then the week is loaded."}]
 };
-const CHECKS = ["Read the 8am brief","Post today's content (all channels due)","Run the reply list (5-10 replies)","15 min community engagement (ES + EN)"];
+const CHECKS = ["Read the 8am brief","Post today's content (all channels due)","Record today's video (ES + EN takes)","Run the reply list (5-10 replies)","15 min community engagement (ES + EN)"];
+
+const VIDEOS = {
+"2026-06-11":{title:"Fable 5 · EN re-surface (X only today)",
+ en:{s:"Apps that took a hundred prompts a year ago now take one.\n\nThat's the team behind Lovable on Claude Fable 5, the new Anthropic model released this week. The most capable model they've ever shipped to the public. Stripe tested it: two months of engineering work, done in one day. It can rebuild a working app from screenshots alone.\n\nHere's what that means for you. You have an idea sitting in your notes. A course, a guide, a template, a tool. The distance between that idea and a product you can sell just collapsed. No code. No team. No budget. One clear instruction and a free afternoon.\n\nAnd this week it's included free on the paid plans, through June 22.\n\nSo pick one idea. The one you keep postponing. Ask the AI to build version one. Ugly is fine. Done is the goal.\n\nThe tools stopped being the excuse. Build your thing this week.",
+ c:"Yesterday I wrote that AI made building free and distribution is the race.\n\n60 seconds on what that means for you and the idea sitting in your notes."}},
+"2026-06-12":{title:"Lid in 60 seconds · product demo",
+ es:{s:"Te enseño cómo funciona Lid en menos de un minuto.\n\nSubes tu producto digital. Un ebook, un curso, una guía. Dos minutos.\n\nCompartes tu link. Y cualquier persona puede compartirlo también y ganar una comisión.\n\nAlguien compra. El dinero se reparte solo, en el mismo segundo: tú y quien trajo la venta.\n\nSin esperas, sin aprobaciones, sin perseguir pagos.\n\nCrear, compartir, vender, cobrar. Eso es Lid. El link está en mi bio.",
+ c:"Crear, compartir, vender, cobrar. Lid en 60 segundos. El link está en la bio. lid.pro"},
+ en:{s:"Let me show you how Lid works in under a minute.\n\nUpload your digital product. An ebook, a course, a guide. Two minutes.\n\nShare your link. Anyone can share it too and earn a commission.\n\nSomeone buys. The money splits itself the same second: you and whoever brought the sale.\n\nNo holds, no approvals, no chasing payouts.\n\nCreate, share, sell, get paid. That's Lid. Link in bio.",
+ c:"Create. Share. Sell. Get paid instantly. Lid in 60 seconds. lid.pro"}},
+"2026-06-13":{title:"Earn without a product · affiliate",
+ es:{s:"No tienes producto y aun así puedes ganar vendiendo en internet.\n\nLos creadores en Lid le ponen comisión a sus productos. 30%, 50%, lo que decidan.\n\nTú compartes el link de un producto que te gusta. Sin permisos, sin contratos.\n\nSe cierra una venta y tu parte llega en el mismo segundo. En dólares digitales.\n\nHoy los programas de afiliados te hacen aplicar, esperar y cobrar a fin de mes. Aquí no.\n\nEncuentra un producto que valga la pena y empieza a compartir. El link está en mi bio.",
+ c:"Sin producto también se gana. Compartes, se vende, cobras al instante. lid.pro"},
+ en:{s:"You don't need your own product to earn online.\n\nCreators on Lid set a commission on their products. 30%, 50%, whatever they decide.\n\nYou share the link of a product you like. No application, no contract.\n\nA sale closes and your cut lands the same second. In digital dollars.\n\nAffiliate programs today make you apply, wait, and collect at month-end. Not here.\n\nFind a product worth sharing and start. Link in bio.",
+ c:"No product, still earning. Share a link, a sale closes, your cut lands the same second. lid.pro"}},
+"2026-06-14":{title:"What football taught me · founder story",
+ es:{s:"Jugué fútbol americano universitario y eso me enseñó más que mi MBA.\n\nEn el campo pierdes un play y tienes diez segundos para correr el siguiente.\n\nConstruir una startup es igual. Un no de un inversionista, un bug, un día malo. Diez segundos y el siguiente play.\n\nLa constancia le gana al talento cuando el talento no se presenta a entrenar.\n\nDisciplina gana la carrera. Nos vemos el lunes.",
+ c:"El fútbol americano me enseñó más que el MBA: pierdes un play, corres el siguiente. La disciplina gana la carrera."},
+ en:{s:"I played college football and it taught me more than my MBA.\n\nOn the field you lose a play and you have ten seconds to run the next one.\n\nBuilding a startup is the same. An investor pass, a bug, a bad day. Ten seconds, next play.\n\nConsistency beats talent when talent doesn't show up to practice.\n\nDiscipline wins the race. See you Monday.",
+ c:"College football taught me more than my MBA: lose a play, run the next one. Discipline wins the race."}},
+"2026-06-15":{title:"Cobra al instante · product demo",
+ es:{s:"¿Vendes algo digital? Te enseño cómo cobrar en el mismo segundo en que te compran.\n\nSubes tu producto: un ebook, un curso, una guía. Dos minutos.\n\nCompartes tu link donde ya está tu audiencia.\n\nAlguien compra y el dinero llega a tu cuenta al instante. En dólares digitales.\n\nSin esperar 30 días. Sin que nadie apruebe tu pago.\n\nEl link está en mi bio si lo quieres probar. lid.pro",
+ c:"Vende tu producto digital y cobra en el mismo segundo. Así de simple. El link está en la bio. lid.pro"},
+ en:{s:"Selling something digital? Here's how to get paid the same second someone buys.\n\nUpload your product: an ebook, a course, a guide. Two minutes.\n\nShare your link where your audience already is.\n\nSomeone buys and the money hits your account instantly. In digital dollars.\n\nNo 30-day wait. No one approving your payout.\n\nLink in bio if you want to try it. lid.pro",
+ c:"Sell your digital product and get paid the same second. That simple. lid.pro"}},
+"2026-06-16":{title:"Content stopped being the bottleneck · market vision",
+ es:{s:"La mayoría del contenido nuevo en internet ya lo hace la inteligencia artificial.\n\nUn estudio de MIT y Oxford calcula que cerca del 64% del contenido nuevo es generado con IA.\n\nCrear ya no es lo difícil. Lo difícil es que confíen en ti y que tu trabajo llegue a la gente correcta.\n\nLa distribución es el nuevo foso. Quien la tiene, gana la próxima década.\n\nTu audiencia es el activo más escaso que existe. Cuídala y ponla a trabajar contigo.",
+ c:"Crear ya no es lo difícil. Que te vean y confíen en ti, sí. La distribución es el nuevo foso."},
+ en:{s:"Most new content on the internet is already made by AI.\n\nAn MIT and Oxford estimate puts AI-generated material at 64% of new internet content.\n\nMaking things stopped being the hard part. Being trusted and getting seen is.\n\nDistribution is the new moat. Whoever owns it wins the next decade.\n\nYour audience is the scarcest asset on the table. Protect it and put it to work with you.",
+ c:"Creating stopped being the hard part. Distribution is the moat now."}},
+"2026-06-17":{title:"Ejército de promotores · product vision",
+ es:{s:"Imagina que cada seguidor tuyo pudiera vender tu producto y ganar una comisión al instante.\n\nTú pones la comisión. 30%, 50%, lo que quieras.\n\nCualquiera comparte tu link. Sin permisos, sin contratos.\n\nSe cierra una venta y todos cobran en el mismo segundo: tú y la persona que la trajo.\n\nEso es un ejército de promotores trabajando contigo.\n\nTu audiencia es tu equipo de ventas. lid.pro si quieres verlo.",
+ c:"Tu audiencia es tu equipo de ventas. Tú pones la comisión, ellos comparten, todos cobran al instante. lid.pro"},
+ en:{s:"Imagine every follower you have could sell your product and earn a commission instantly.\n\nYou set the commission. 30%, 50%, your call.\n\nAnyone shares your link. No permissions, no contracts.\n\nA sale closes and everyone gets paid the same second: you and the person who brought it.\n\nThat's an army of promoters working with you.\n\nYour audience is your sales team. lid.pro if you want to see it.",
+ c:"Your audience is your sales team. You set the commission, they share, everyone gets paid instantly. lid.pro"}},
+"2026-06-18":{title:"Esta semana en Lid · build in public",
+ es:{s:"Esto es lo que pasó esta semana construyendo Lid.\n\n(Actualiza con lo real de la semana) Versión en español lista. Analíticas en vivo para creadores y afiliados.\n\nTres ciclos de pago completos hasta hoy. Cien por ciento de precisión en cada pago.\n\nLa siguiente prueba: la primera venta traída por un afiliado. Ahí vamos.\n\nPaso a paso. Día a día.",
+ c:"Semana de trinchera en Lid: español listo, analíticas en vivo, 100% de precisión en pagos. Sigue la primera venta de afiliado."},
+ en:{s:"Here's what happened building Lid this week.\n\n(Update with the week's real items) Spanish version live. Analytics live for creators and affiliates.\n\nThree full payout cycles so far. One hundred percent payout accuracy.\n\nNext proof: the first affiliate-attributed sale. That's where we're headed.\n\nOne step at a time. Day by day.",
+ c:"Trench week at Lid: Spanish live, analytics live, 100% payout accuracy. Next up: the first affiliate-attributed sale."}},
+"2026-06-19":{title:"La mitad de los creadores · market stat",
+ es:{s:"Casi la mitad de los creadores ganan menos de 10 mil dólares al año.\n\nEl problema no es el talento. Las plataformas pagan por atención, y la atención se renta.\n\nCuando vendes algo tuyo, el juego cambia.\n\nY cuando tu comunidad puede venderlo contigo y ganar su parte, el juego cambia todavía más.\n\nCrea algo tuyo esta semana. El link está en mi bio.",
+ c:"Casi la mitad de los creadores ganan menos de $10K al año. El problema es la distribución, no el talento. Crea algo tuyo. lid.pro"},
+ en:{s:"Almost half of all creators earn less than ten thousand dollars a year.\n\nThe problem was never talent. Platforms pay for attention, and attention is rented.\n\nWhen you sell something you own, the math changes.\n\nAnd when your community can sell it with you and earn their cut, it changes even more.\n\nBuild something of yours this week. Link in bio.",
+ c:"Almost half of creators earn under $10K a year. The gap is distribution, not talent. Build something you own. lid.pro"}},
+"2026-06-20":{title:"El error del 2% · expertise",
+ es:{s:"El error número uno al poner comisión a tu producto: ser tacaño.\n\nUn creador que conozco puso 2% de comisión. Nadie compartió su producto. Obvio.\n\nPiénsalo al revés: el 50% de una venta que no existía es infinitamente mejor que el 100% de nada.\n\nComisiones de 30 a 50% convierten a tu audiencia en tu equipo de ventas de verdad.\n\nPaga bien a quien vende por ti. Esa es toda la estrategia.",
+ c:"El 50% de una venta que no existía gana al 100% de nada. Paga bien a tus promotores."},
+ en:{s:"The number one mistake when setting your affiliate commission: being cheap.\n\nA creator I know set 2%. Nobody shared his product. Obviously.\n\nFlip it: 50% of a sale that didn't exist beats 100% of nothing.\n\nCommissions of 30 to 50% turn your audience into a real sales team.\n\nPay the people who sell for you well. That's the whole strategy.",
+ c:"50% of a sale that didn't exist beats 100% of nothing. Pay your promoters well."}},
+"2026-06-21":{title:"Tu link, no tu canal · product vision",
+ es:{s:"No necesitas otra plataforma. Necesitas un lugar donde cerrar la venta.\n\nYa tienes tu audiencia en Instagram, en TikTok, en YouTube. Eso no cambia.\n\nLid es el final del embudo: el link donde tu contenido se convierte en ingreso.\n\nTu contenido trae a la gente. Tu link cierra la venta. Tú cobras al instante.\n\nTu link, no tu canal. El link está en mi bio.",
+ c:"Tu contenido trae a la gente. Tu link cierra la venta. Tu canal sigue siendo tuyo. lid.pro"},
+ en:{s:"You don't need another platform. You need a place where the sale closes.\n\nYour audience already lives on Instagram, TikTok, YouTube. That doesn't change.\n\nLid is the end of the funnel: the link where your content turns into income.\n\nYour content brings the people. Your link closes the sale. You get paid instantly.\n\nYour CTA, not your distribution channel. Link in bio.",
+ c:"Your content brings the people. Your link closes the sale. Your channel stays yours. lid.pro"}}
+};
 // ---- END BATCH DATA ----
 
 const fmt = d => d.toISOString().slice(0,10);
@@ -227,6 +311,65 @@ tabsEl.innerHTML = dates.map(d=>{
   return `<button class="daytab" data-d="${d}" onclick="showDay('${d}')">${day} ${d.slice(8)}</button>`;
 }).join('');
 showDay(POSTS[tKey] ? tKey : dates.find(d=>d>=tKey) || dates[dates.length-1]);
+
+// ---- Today's video panel ----
+const vid = VIDEOS[tKey];
+const vEl = document.getElementById('vid-panel');
+let vLang = null;
+const vKey = 'lidvid-'+tKey;
+let vState = JSON.parse(localStorage.getItem(vKey)||'[]');
+const VSTATS = ["Recorded ES","Recorded EN","Posted IG/TikTok","Posted X"];
+function renderVid(){
+  if(!vid){
+    const vd = Object.keys(VIDEOS).sort().find(d=>d>tKey);
+    document.getElementById('vid-tag').textContent='none today';
+    vEl.innerHTML = '<div class="empty">No video scheduled today.'+(vd?' Next: '+vd+' · '+VIDEOS[vd].title:'')+'</div>';
+    return;
+  }
+  const langs = ['es','en'].filter(l=>vid[l]);
+  if(!vLang) vLang = langs[0];
+  const v = vid[vLang];
+  document.getElementById('vid-tag').textContent = vid.title;
+  vEl.innerHTML =
+    (langs.length>1 ? '<div class="vtabs">'+langs.map(l=>`<button class="vtab ${l===vLang?'active':''}" onclick="setVLang('${l}')">${l.toUpperCase()}</button>`).join('')+'</div>' : '')+
+    `<div class="post"><div class="meta"><span class="ch">Script · ${vLang.toUpperCase()}</span>
+      <button class="copy" onclick="copyTxt(this,'vscript')">Copy</button></div>
+      <pre id="vscript">${v.s.replace(/</g,'&lt;')}</pre></div>
+     <div class="post"><div class="meta"><span class="ch">Caption · ${vLang.toUpperCase()}</span>
+      <button class="copy" onclick="copyTxt(this,'vcap')">Copy</button></div>
+      <pre id="vcap">${v.c.replace(/</g,'&lt;')}</pre></div>
+     <button class="tpbtn" onclick="tpOpen()">Open teleprompter</button>
+     <div class="vstat">`+
+     VSTATS.map((s,i)=>`<label><input type="checkbox" ${vState[i]?'checked':''} onchange="vTick(${i})">${s}</label>`).join('')+
+     `</div>`;
+}
+window.setVLang = l => { vLang = l; renderVid(); };
+window.vTick = i => { vState[i]=!vState[i]; localStorage.setItem(vKey,JSON.stringify(vState)); };
+renderVid();
+
+// ---- Teleprompter ----
+let tpRun=false, tpSpd=1, tpRAF=null;
+window.tpOpen = ()=>{
+  if(!vid) return;
+  document.getElementById('tptext').textContent = vid[vLang].s;
+  document.getElementById('tp').classList.add('open');
+  document.getElementById('tptext').scrollTop = 0;
+  tpRun=false; document.getElementById('tpplay').textContent='Start';
+};
+function tpStep(){
+  if(tpRun){ document.getElementById('tptext').scrollTop += tpSpd; }
+  tpRAF = requestAnimationFrame(tpStep);
+}
+window.tpToggle = ()=>{
+  tpRun=!tpRun;
+  document.getElementById('tpplay').textContent = tpRun?'Pause':'Start';
+  if(tpRAF===null) tpStep();
+};
+window.tpSpeed = d => { tpSpd = Math.max(0.2, Math.min(3, tpSpd+d)); };
+window.tpClose = ()=>{
+  document.getElementById('tp').classList.remove('open');
+  tpRun=false; if(tpRAF){cancelAnimationFrame(tpRAF); tpRAF=null;}
+};
 </script>
 </body>
 </html>
